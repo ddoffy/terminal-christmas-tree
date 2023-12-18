@@ -56,9 +56,10 @@ def tree(height=13, screen_width=80):
 # random ball in tree
 def balls(tree):
     for idx, _ in enumerate(tree[:-3], 2):
-        tree[idx] = random_change_char(tree[idx], len(tree[idx])//8)
+        length = len(tree[idx])
+        tree[idx] = random_change_char(tree[idx], length//8)
         # random snowflake in tree
-        tree[idx] = random_change_snowflake(tree[idx], len(tree[idx]) // 10)
+        tree[idx] = random_change_snowflake(tree[idx], random.randint(1, length // 13 // 2))
     return tree
 
 
