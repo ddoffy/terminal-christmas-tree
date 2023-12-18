@@ -14,6 +14,7 @@ COLOR = {
     'red': '\033[91m'
 }
 STAR = '★'
+SNOWFLAKE = '❄'
 
 
 def random_change_char(string, value):
@@ -24,12 +25,18 @@ def random_change_char(string, value):
             string[idx] = BALL
     return ''.join(string)
 
+def random_change_snowflake(string, value):
+    indexes = random.sample(range(0, len(string)), value)
+    string = list(string)
+    for idx in indexes:
+        if string[idx] == ' ':
+            string[idx] = SNOWFLAKE
+    return ''.join(string)
 
 def tree(height=13, screen_width=80):
     star = (STAR, 3*STAR)
-    if height % 2 != 0:
-        height += 1
-    body = ['/_\\', '/_\_\\']
+    height = height + (height & 1)
+    body = ['/_\\', '/_\\_\\']
     trunk = '[___]'
     begin = '/'
     end = '\\'
@@ -46,10 +53,12 @@ def tree(height=13, screen_width=80):
 
     return [line.center(screen_width) for line in (*star, *body, trunk)]
 
-
+# random ball in tree
 def balls(tree):
     for idx, _ in enumerate(tree[:-3], 2):
         tree[idx] = random_change_char(tree[idx], len(tree[idx])//8)
+        # random snowflake in tree
+        tree[idx] = random_change_snowflake(tree[idx], len(tree[idx]) // 10)
     return tree
 
 
@@ -60,20 +69,25 @@ def colored_stars_balls(tree):
             if string[pos] == STAR:
                 string[pos] = ''.join([COLOR['yellow'], STAR, '\033[0m'])
             elif string[pos] == BALL:
-                string[pos] = ''.join([random.choice(list(COLOR.values())), BALL, '\033[0m'])
+                string[pos] = ''.join([random.choice(
+                    list(COLOR.values())), BALL, '\033[0m'])
         tree[idx] = ''.join(string)
     return tree
 
 
 def cli():
-    parser = argparse.ArgumentParser(prog="Python Christmas Tree by Chico Lucio from Ciencia Programada",
-                                     epilog="Ctrl-C interrupts the Christmas :-(")
-    parser.add_argument('-s', '--size', default=13, type=int,
-                        help="Tree height. If even it will be subtracted 1. If less than 7, considered 5. Default: 13")
-    parser.add_argument('-w', '--width', default=80, type=int,
-                        help="Screen width. Used to center the tree. Default: 80")
-    parser.add_argument('-t', '--terminal', action='store_true',
-                        help="Uses the terminal size to center the tree. -s and -w will be ignored")
+    parser = argparse.ArgumentParser(
+        prog="Python Christmas Tree",
+        epilog="Ctrl-C interrupts the Christmas :-(")
+    parser.add_argument(
+        '-s', '--size', default=13, type=int,
+        help="Tree height. If even it will be subtracted 1. If less than 7, considered 5. Default: 13")
+    parser.add_argument(
+        '-w', '--width', default=80, type=int,
+        help="Screen width. Used to center the tree. Default: 80")
+    parser.add_argument(
+        '-t', '--terminal', action='store_true',
+        help="Uses the terminal size to center the tree. -s and -w will be ignored")
     args = parser.parse_args()
 
     if args.terminal:
@@ -84,9 +98,15 @@ def cli():
         screen_width = args.width
     while True:
         try:
-            time.sleep(random.uniform(.1, 1))
+            time.sleep(random.uniform(.5, 1))
             os.system('cls' if os.name == 'nt' else 'clear')
-            print('\n'.join(colored_stars_balls(balls(tree(height, screen_width)))))
+            print(
+                '\n'.join(
+                    colored_stars_balls(
+                        balls(
+                            tree(
+                                height,
+                                screen_width)))))
         except KeyboardInterrupt:
             os.system('cls' if os.name == 'nt' else 'clear')
             print(f"\n{'Merry Christmas!!':^{screen_width}}", end='\n\n')
