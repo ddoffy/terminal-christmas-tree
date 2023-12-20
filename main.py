@@ -78,7 +78,7 @@ def colored_stars_balls(tree):
 
 def cli():
     parser = argparse.ArgumentParser(
-        prog="Python Christmas Tree",
+        prog="Christmas Tree",
         epilog="Ctrl-C interrupts the Christmas :-(")
     parser.add_argument(
         '-s', '--size', default=13, type=int,
